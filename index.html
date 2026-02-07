@@ -16,30 +16,65 @@
       background: #000;
     }
 
-    /* Photo collage background */
-    .collage {
+    /* FILM-REEL STYLE 3x3 BACKGROUND */
+    .reel {
       position: fixed;
       inset: 0;
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-rows: repeat(4, 1fr);
-      gap: 6px;
-      padding: 6px;
-      filter: brightness(0.55);
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      filter: grayscale(100%);
+      transition: filter 1s ease;
       z-index: -2;
     }
 
-    .collage img {
+    .reel.color { filter: grayscale(0%); }
+
+    .frame {
+      position: relative;
+      overflow: hidden;
+      border: 6px solid #111;
+    }
+
+    .frame::before,
+    .frame::after {
+      content: '';
+      position: absolute;
+      top: 6px;
+      bottom: 6px;
+      width: 8px;
+      background: repeating-linear-gradient(
+        to bottom,
+        #000 0px,
+        #000 8px,
+        transparent 8px,
+        transparent 16px
+      );
+      opacity: 0.9;
+    }
+
+    .frame::before { left: 4px; }
+    .frame::after { right: 4px; }
+
+    .frame img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .overlay-dark {
+    /* CENTER MASK */
+    .center-mask {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.55);
+      background: radial-gradient(circle at center,
+        rgba(0,0,0,0.85) 0%,
+        rgba(0,0,0,0.7) 25%,
+        rgba(0,0,0,0.4) 40%,
+        rgba(0,0,0,0.15) 55%,
+        rgba(0,0,0,0) 65%
+      );
       z-index: -1;
+      pointer-events: none;
     }
 
     .container {
@@ -47,46 +82,44 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 1rem;
+      z-index: 2;
     }
 
-    /* Glass-style card */
     .card {
-      background: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      padding: 2.6rem 2.4rem;
-      border-radius: 28px;
+      background: rgba(255,255,255,0.14);
+      backdrop-filter: blur(22px);
+      padding: 3.2rem 2.8rem;
+      border-radius: 36px;
       text-align: center;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
-      max-width: 420px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+      max-width: 480px;
       width: 100%;
-      border: 1px solid rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.25);
     }
 
     h1 {
-      font-size: 2.4rem;
-      margin-bottom: 2rem;
-      color: #fda4af;
+      font-size: 2.6rem;
+      margin-bottom: 2.4rem;
+      color: #fff;
+      text-shadow: 0 4px 18px rgba(0,0,0,0.8);
     }
 
     .buttons {
       position: relative;
-      height: 140px;
+      height: 190px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
     }
 
     button {
-      font-size: 1.1rem;
-      padding: 0.8rem 2rem;
+      font-size: 1.15rem;
+      padding: 0.9rem 2.3rem;
       border-radius: 999px;
       border: none;
       cursor: pointer;
-      position: absolute;
       transition: box-shadow 0.15s ease;
-    }
-
-    button:hover {
-      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.35);
     }
 
     .yes {
@@ -97,30 +130,50 @@
     }
 
     .no {
-      background: #020617;
-      color: #e5e7eb;
+      background: rgba(0,0,0,0.6);
+      color: #ffffff;
     }
 
-    /* Floating hearts */
-    .heart {
-      position: fixed;
-      bottom: -20px;
-      font-size: 20px;
-      animation: floatUp 6s linear infinite;
-      opacity: 0.7;
+    /* NO BUTTON MESSAGE */
+    .no-message {
+      position: absolute;
+      background: rgba(0,0,0,0.8);
+      color: #fff;
+      padding: 0.45rem 0.9rem;
+      border-radius: 14px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transform: translateY(-8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
       pointer-events: none;
+      white-space: nowrap;
     }
 
-    @keyframes floatUp {
-      from { transform: translateY(0); opacity: 0.7; }
-      to { transform: translateY(-110vh); opacity: 0; }
+    .no-message.show {
+      opacity: 1;
+      transform: translateY(-18px);
     }
 
-    /* Popup */
+    /* CONFETTI */
+    .confetti {
+      position: fixed;
+      width: 8px;
+      height: 14px;
+      opacity: 0.95;
+      z-index: 20;
+      animation: confetti 1.6s ease-out forwards;
+    }
+
+    @keyframes confetti {
+      from { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+      to { transform: translate(var(--x), var(--y)) rotate(720deg); opacity: 0; }
+    }
+
+    /* POPUP */
     .popup-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.55);
       display: none;
       align-items: center;
       justify-content: center;
@@ -128,125 +181,167 @@
     }
 
     .popup {
-      background: rgba(15,23,42,0.95);
-      backdrop-filter: blur(16px);
-      border-radius: 26px;
-      padding: 2rem;
+      background: linear-gradient(135deg, rgba(255,255,255,0.45), rgba(255,255,255,0.18));
+      backdrop-filter: blur(28px);
+      border-radius: 40px;
+      padding: 3.6rem 3.2rem;
       text-align: center;
-      max-width: 360px;
-      width: 90%;
-      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-      animation: pop 0.3s ease-out;
-      color: #f8fafc;
+      max-width: 560px;
+      width: 94%;
+      box-shadow: 0 50px 120px rgba(0,0,0,0.7);
+      color: #ffffff;
+      animation: pop 0.4s ease-out, pulse 0.6s ease-out 0.4s;
     }
 
     @keyframes pop {
-      from { transform: scale(0.85); opacity: 0; }
+      from { transform: scale(0.8); opacity: 0; }
       to { transform: scale(1); opacity: 1; }
     }
 
-    .popup img {
-      width: 100%;
-      border-radius: 18px;
-      margin-bottom: 1rem;
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.06); }
+      100% { transform: scale(1); }
     }
 
     .popup h2 {
-      color: #fda4af;
-      margin-bottom: 0.5rem;
+      font-size: 2.2rem;
+      margin-bottom: 0.8rem;
     }
 
     .popup p {
-      color: #e5e7eb;
-      font-size: 1.05rem;
+      font-size: 1.2rem;
+      line-height: 1.6;
     }
   </style>
 </head>
 
 <body>
-  <!-- Background collage -->
-  <div class="collage">
-    <img src="images/photo1.jpg">
-    <img src="images/photo2.jpg">
-    <img src="images/photo3.jpg">
-    <img src="images/photo4.jpg">
-    <img src="images/photo5.jpg">
-    <img src="images/photo6.jpg">
-    <img src="images/photo7.jpg">
-    <img src="images/photo8.jpg">
-    <img src="images/photo1.jpg">
-    <img src="images/photo2.jpg">
-    <img src="images/photo3.jpg">
-    <img src="images/photo4.jpg">
-    <img src="images/photo5.jpg">
-    <img src="images/photo6.jpg">
-    <img src="images/photo7.jpg">
-    <img src="images/photo8.jpg">
+  <!-- FILM REEL GRID -->
+  <div class="reel" id="reel">
+    <div class="frame"><img src="images/photo1.jpg"></div>
+    <div class="frame"><img src="images/photo2.jpg"></div>
+    <div class="frame"><img src="images/photo3.jpg"></div>
+    <div class="frame"><img src="images/photo4.jpg"></div>
+    <div class="frame"><img src="images/photo5.jpg"></div>
+    <div class="frame"><img src="images/photo6.jpg"></div>
+    <div class="frame"><img src="images/photo7.jpg"></div>
+    <div class="frame"><img src="images/photo8.jpg"></div>
+    <div class="frame"><img src="images/photo9.jpg"></div>
   </div>
-  <div class="overlay-dark"></div>
+
+  <div class="center-mask"></div>
 
   <div class="container">
     <div class="card">
       <h1>Will you be my Valentine? ❤️</h1>
-
       <div class="buttons" id="buttonArea">
         <button class="yes" onclick="sayYes()">Yes</button>
         <button class="no" id="noBtn">No</button>
+        <div class="no-message" id="noMsg"></div>
       </div>
     </div>
   </div>
 
-  <!-- Popup -->
+  <!-- POPUP -->
   <div class="popup-overlay" id="popup">
     <div class="popup">
-      <img src="images/photo3.jpg" alt="Us">
-      <h2>Reservation Confirmed 💌</h2>
-      <p>Get ready for your date! 🎟️<br>Here’s your ticket — I can’t wait ❤️</p>
+      <h2>Reservation Confirmed</h2>
+      <p>
+        You’re officially booked for a date with me ✨<br><br>
+        No refunds. No cancellations.<br>
+        Dress cute. Be ready. ❤️
+      </p>
     </div>
   </div>
 
   <script>
-    function sayYes() {
-      document.getElementById('popup').style.display = 'flex';
-    }
-
-    /* Controlled runaway No button */
+    // ELEMENTS
+    const reel = document.getElementById('reel');
+    const popup = document.getElementById('popup');
+    const yesBtn = document.querySelector('.yes');
     const noBtn = document.getElementById('noBtn');
     const area = document.getElementById('buttonArea');
+    const noMsg = document.getElementById('noMsg');
 
+    // RANDOM NO MESSAGES
+    const messages = [
+      'Nice try 😉',
+      'Not an option 😌',
+      'I know you love me ❤️'
+    ];
+
+    // STATE FOR NO BUTTON POSITION
     let currentX = 0;
-    let currentY = 60;
+    let currentY = 0;
 
-    noBtn.style.left = currentX + 'px';
-    noBtn.style.top = currentY + 'px';
-
-    noBtn.addEventListener('mouseover', () => {
-      const radius = 120;
-      const angle = Math.random() * Math.PI * 2;
-
-      const dx = Math.cos(angle) * radius;
-      const dy = Math.sin(angle) * radius;
-
+    // INITIAL LAYOUT: buttons side-by-side (CSS flex)
+    // After layout, lock No button position so it can move
+    window.addEventListener('load', () => {
+      const rect = noBtn.getBoundingClientRect();
       const areaRect = area.getBoundingClientRect();
 
-      currentX = Math.min(Math.max(currentX + dx, 0), areaRect.width - noBtn.offsetWidth);
-      currentY = Math.min(Math.max(currentY + dy, 0), areaRect.height - noBtn.offsetHeight);
+      currentX = rect.left - areaRect.left;
+      currentY = rect.top - areaRect.top;
+
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = currentX + 'px';
+      noBtn.style.top = currentY + 'px';
+    });
+
+    // YES BUTTON
+    yesBtn.addEventListener('click', () => {
+      reel.classList.add('color');
+      popup.style.display = 'flex';
+
+      // Confetti burst
+      const colors = ['#ef4444','#f97316','#eab308','#22c55e','#3b82f6','#a855f7'];
+      for (let i = 0; i < 120; i++) {
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.background = colors[Math.floor(Math.random() * colors.length)];
+        c.style.left = '50vw';
+        c.style.top = '45vh';
+        c.style.setProperty('--x', (Math.random() * 600 - 300) + 'px');
+        c.style.setProperty('--y', (Math.random() * 600 - 150) + 'px');
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 1600);
+      }
+    });
+
+    // CLOSE POPUP
+    popup.addEventListener('click', (e) => {
+      if (e.target === popup) {
+        popup.style.display = 'none';
+        reel.classList.remove('color');
+      }
+    });
+
+    // NO BUTTON HOVER (RUN AWAY)
+    noBtn.addEventListener('mouseenter', () => {
+      const radius = 140;
+      const angle = Math.random() * Math.PI * 2;
+      const dx = Math.cos(angle) * radius;
+      const dy = Math.sin(angle) * radius;
+      const rect = area.getBoundingClientRect();
+
+      currentX = Math.min(Math.max(currentX + dx, 0), rect.width - noBtn.offsetWidth);
+      currentY = Math.min(Math.max(currentY + dy, 0), rect.height - noBtn.offsetHeight);
 
       noBtn.style.left = currentX + 'px';
       noBtn.style.top = currentY + 'px';
     });
 
-    /* Floating hearts */
-    setInterval(() => {
-      const heart = document.createElement('div');
-      heart.className = 'heart';
-      heart.innerText = '❤️';
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.fontSize = (14 + Math.random() * 20) + 'px';
-      document.body.appendChild(heart);
-
-      setTimeout(() => heart.remove(), 6000);
-    }, 400);
+    // NO BUTTON CLICK (MESSAGE)
+    noBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const text = messages[Math.floor(Math.random() * messages.length)];
+      noMsg.textContent = text;
+      noMsg.style.left = currentX + 'px';
+      noMsg.style.top = (currentY - 28) + 'px';
+      noMsg.classList.add('show');
+      setTimeout(() => noMsg.classList.remove('show'), 1500);
+    });
   </script>
 </body>
 </html>
